@@ -1,0 +1,14 @@
+# Use an official Java 17 runtime as a parent image
+FROM openjdk:17-jdk-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the application JAR file into the container
+COPY target/mancala-service-1.0.0.jar /app/mancala-service-1.0.0.jar
+
+# Expose the port that mancala-service listens on
+EXPOSE 8080
+
+# Define the command to run mancala-service application
+CMD ["java", "-jar", "mancala-service-1.0.0.jar"]

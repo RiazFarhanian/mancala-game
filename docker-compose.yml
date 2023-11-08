@@ -1,0 +1,66 @@
+version: '3'
+services:
+  # Postgresql Database
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: mancala_db
+      POSTGRES_USER: bol_user
+      POSTGRES_PASSWORD: bol_password
+    ports:
+      - 5432:5432  # Expose Postgresql port
+
+  # Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.5
+    environment:
+      KEYCLOAK_ADMIN: bol_admin
+      KEYCLOAK_ADMIN_PASSWORD: bol_password
+      KC_DB: postgres
+#      KC_HOSTNAME: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/mancala_db
+      KC_DB_USERNAME: bol_user
+      KC_DB_PASSWORD: bol_password
+      KC_METRICS_ENABLED: false
+    volumes:
+      - ./keycloak/import-data:/opt/keycloak/data/import
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - 7070:8080  # Expose Keycloak port
+    depends_on:
+      - postgres
+
+
+  # Eureka Service Registry
+  eureka:
+    build:
+      context: ./eureka  # Directory containing the Eureka service Dockerfile
+    ports:
+      - 8761:8761  # Expose Eureka port
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./api-gateway  # Directory containing the API Gateway Dockerfile
+    ports:
+      - 8080:8080  # Expose API Gateway port
+    depends_on:
+      - eureka  # Ensure API Gateway starts after Eureka
+    environment:
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
+
+
+  # Mancala Service
+  mancala-service:
+    build:
+      context: ./mancala-service  # Directory containing the Mancala Service Dockerfile
+    ports:
+      - 8081:8080  # Expose Mancala Service port
+    depends_on:
+      - eureka  # Ensure Mancala Service starts after Eureka
+      - postgres
+    environment:
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mancala_db
+      SPRING_DATASOURCE_USERNAME: bol_user
+      SPRING_DATASOURCE_PASSWORD: bol_password

@@ -1,0 +1,23 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 8075
+spring:
+  application:
+    name: mancala-service
+  sql:
+    init:
+      mode: always
+  datasource:
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
+    url: jdbc:postgresql://localhost:5432/mancala_db
+    username: bol_user
+    password: bol_password
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop

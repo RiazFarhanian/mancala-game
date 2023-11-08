@@ -1,0 +1,14 @@
+# Use an official Java 17 runtime as a parent image
+FROM openjdk:17-jdk-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the application JAR file into the container
+COPY target/api-gateway-1.0.0.jar /app/api-gateway-1.0.0.jar
+
+# Expose the port that api-gateway listens on
+EXPOSE 8080
+
+# Define the command to run api-gateway application
+CMD ["java", "-jar", "api-gateway-1.0.0.jar"]

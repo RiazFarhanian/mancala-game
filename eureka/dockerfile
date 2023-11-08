@@ -1,0 +1,14 @@
+# Use an official Java 17 runtime as a parent image
+FROM openjdk:17-jdk-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the application JAR file into the container
+COPY target/eureka-1.0.0.jar /app/eureka-1.0.0.jar
+
+# Expose the port that Eureka listens on
+EXPOSE 8761
+
+# Define the command to run Eureka application
+CMD ["java", "-jar", "eureka-1.0.0.jar"]
