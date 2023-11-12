@@ -1,9 +1,9 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_DEFAULT-ZONE:http://localhost:8761/eureka/}
 server:
-  port: 8075
+  port: ${SERVER_PORT:8081}
 spring:
   application:
     name: mancala-service
@@ -14,9 +14,9 @@ spring:
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
-    url: jdbc:postgresql://localhost:5432/mancala_db
-    username: bol_user
-    password: bol_password
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/mancala_db}
+    username: ${DATASOURCE_USERNAME:bol_user}
+    password: ${DATASOURCE_PASSWORD:bol_password}
   jpa:
     show-sql: true
     hibernate:

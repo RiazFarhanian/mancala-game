@@ -1,14 +1,28 @@
+# Stage 1: Build JAR with Maven
 # Use an official Java 17 runtime as a parent image
+FROM maven:3.8.4-openjdk-17-slim AS builder
+#FROM maven:3.8.4-openjdk-17-slim
+
+WORKDIR /usr/src/app
+
+# Copy only the necessary files for dependency resolution
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copy the entire project and build the JAR
+COPY . .
+RUN mvn package -DskipTests
+
+# Stage 2: Create a lightweight image with only the JAR
 FROM openjdk:17-jdk-slim
 
-# Set the working directory inside the container
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy the application JAR file into the container
-COPY target/mancala-service-1.0.0.jar /app/mancala-service-1.0.0.jar
+# Copy the JAR file from the builder stage
+COPY --from=builder /usr/src/app/target/mancala-service-1.0.0.jar .
 
-# Expose the port that mancala-service listens on
+# Expose the port that Eureka listens on
 EXPOSE 8080
 
-# Define the command to run mancala-service application
+# Specify the command to run on container startup
 CMD ["java", "-jar", "mancala-service-1.0.0.jar"]

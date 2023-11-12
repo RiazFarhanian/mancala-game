@@ -1,3 +1,5 @@
+mancala:
+  keycloak-base: ${KEYCLOAK_BASE_URL:http://localhost:8080}
 spring:
   application:
     name: api-gateway
@@ -17,10 +19,24 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:7070/realms/mancala
+          jwk-set-uri: ${JWK_SET_URI:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/certs}
+      client:
+        provider:
+          keycloak:
+            authorization-uri: ${AUTH-URI:${mancala.keycloak-base}/realms/master/protocol/openid-connect/auth}
+            user-info-uri: ${USER_INFO:${mancala.keycloak-base}/realms/master/protocol/openid-connect/userinfo}
+            jwk-set-uri: ${JWK_SET_URI:${mancala.keycloak-base}/realms/master/protocol/openid-connect/certs}
+            token-uri: ${TOKEN-URI:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/token}
+        registration:
+          keycloak:
+            client-id: ${CLIENT_ID:mancala_rest_api}
+            authorization-grant-type: password
+            scope: openid
+            redirect-uri: ${REDIRECT-URL:http://localhost:4200}
+            client-authentication-method: post
 server:
-  port: 8080
+  port: 7070
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_DEFAULT-ZONE:http://localhost:8761/eureka/}

@@ -17,7 +17,6 @@ services:
       KEYCLOAK_ADMIN: bol_admin
       KEYCLOAK_ADMIN_PASSWORD: bol_password
       KC_DB: postgres
-#      KC_HOSTNAME: postgres
       KC_DB_URL: jdbc:postgresql://postgres/mancala_db
       KC_DB_USERNAME: bol_user
       KC_DB_PASSWORD: bol_password
@@ -26,7 +25,7 @@ services:
       - ./keycloak/import-data:/opt/keycloak/data/import
     command: ["start-dev", "--import-realm"]
     ports:
-      - 7070:8080  # Expose Keycloak port
+      - 8080:8080  # Expose Keycloak port
     depends_on:
       - postgres
 
@@ -43,24 +42,37 @@ services:
     build:
       context: ./api-gateway  # Directory containing the API Gateway Dockerfile
     ports:
-      - 8080:8080  # Expose API Gateway port
+      - 7070:7070  # Expose API Gateway port
     depends_on:
       - eureka  # Ensure API Gateway starts after Eureka
+      - keycloak
     environment:
-      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
-
+      KEYCLOAK_BASE_URL: http://keycloak:8080
+      CLIENT_ID: mancala_rest_api
+      EUREKA_DEFAULT-ZONE: http://eureka:8761/eureka
 
   # Mancala Service
   mancala-service:
     build:
       context: ./mancala-service  # Directory containing the Mancala Service Dockerfile
     ports:
-      - 8081:8080  # Expose Mancala Service port
+      - 8081:8081  # Expose Mancala Service port
     depends_on:
-      - eureka  # Ensure Mancala Service starts after Eureka
+      - eureka
       - postgres
     environment:
       EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mancala_db
-      SPRING_DATASOURCE_USERNAME: bol_user
-      SPRING_DATASOURCE_PASSWORD: bol_password
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/mancala_db
+      DATASOURCE_USERNAME: bol_user
+      DATASOURCE_PASSWORD: bol_password
+      SERVER_PORT: 8081
+
+
+  #Angular App
+  angular-app:
+    build:
+      context: ./angular-app # Directory containing the angular-app Dockerfile
+    ports:
+      - 4200:80
+    depends_on:
+      - keycloak

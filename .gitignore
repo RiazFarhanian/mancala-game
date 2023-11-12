@@ -40,3 +40,10 @@ build/
 /.idea/encodings.xml
 /.idea/misc.xml
 /.idea/uiDesigner.xml
+/api-gateway/.mvn/wrapper/maven-wrapper.jar
+/api-gateway/.mvn/wrapper/maven-wrapper.properties
+/eureka/.mvn/wrapper/maven-wrapper.jar
+/eureka/.mvn/wrapper/maven-wrapper.properties
+/mancala-service/.mvn/wrapper/maven-wrapper.jar
+/mancala-service/.mvn/wrapper/maven-wrapper.properties
+/angular-app/app/dist/
