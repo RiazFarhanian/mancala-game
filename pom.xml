@@ -16,9 +16,11 @@
     </properties>
 
     <modules>
-        <module>api-gateway</module>
         <module>eureka</module>
+        <module>api-gateway</module>
+        <module>common</module>
         <module>mancala-service</module>
+        <module>waiting-room-service</module>
     </modules>
 
 </project>
