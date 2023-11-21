@@ -46,7 +46,8 @@ public class TwoPlayersGameGeneratorService implements GameGenerator {
     public Board generateNewBoard(PlayerDto playerDto) {
         return new Board(
                 generateNewPitList(),
-                playerMapper.playerDtoToPlayer(playerDto)
+                playerMapper.playerDtoToPlayer(playerDto),
+                0
         );
     }
 
