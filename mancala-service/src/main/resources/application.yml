@@ -1,3 +1,8 @@
+mancala:
+  keycloak-base: ${KEYCLOAK_BASE_URL:http://192.168.10.79:8080}
+  kafka-topic:
+    game-notification: notification.game-event
+    pair-player-topic: game.paired-players
 eureka:
   client:
     serviceUrl:
@@ -5,19 +10,43 @@ eureka:
 server:
   port: ${SERVER_PORT:8081}
 spring:
+  profiles:
+    include: yaml
   application:
     name: mancala-service
-  sql:
-    init:
-      mode: always
-  datasource:
-    hikari:
-      connection-timeout: 30000
-      maximum-pool-size: 10
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/mancala_db}
-    username: ${DATASOURCE_USERNAME:bol_user}
-    password: ${DATASOURCE_PASSWORD:bol_password}
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop
+  data:
+    mongodb:
+      host: ${MONGO-HOST:localhost}
+      port: ${MONGO-PORT:27017}
+      database: ${MONGO-DB:mancala}
+      username: ${MONGO-USER:mancala}
+      password: ${MONGO-PASSWORD:mancala_password}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWK_SET_URI:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/certs}
+      client:
+        provider:
+          keycloak:
+            authorization-uri: ${AUTH-URI:${mancala.keycloak-base}/realms/master/protocol/openid-connect/auth}
+            user-info-uri: ${USER_INFO:${mancala.keycloak-base}/realms/master/protocol/openid-connect/userinfo}
+            jwk-set-uri: ${JWK_SET_URI:${mancala.keycloak-base}/realms/master/protocol/openid-connect/certs}
+            token-uri: ${TOKEN-URI:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/token}
+        registration:
+          keycloak:
+            client-id: ${CLIENT_ID:mancala_rest_api}
+            authorization-grant-type: password
+            scope: openid
+            redirect-uri: ${REDIRECT-URL:http://localhost:4200}
+            client-authentication-method: post
+  kafka:
+    bootstrap-servers: 192.168.10.79:9092
+    producer:
+      properties:
+        spring.json.add.type.headers: false
+    consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: GameProcessingGroup
+      properties:
+        spring.json.trusted.packages: com.bol.interview.common.*

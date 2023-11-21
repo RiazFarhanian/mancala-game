@@ -1,7 +1,7 @@
 package com.bol.interview.waitingroomservice.configuration;
 
-import com.bol.interview.common.dto.PairPlayers;
-import com.bol.interview.common.dto.Player;
+import com.bol.interview.common.dto.PlayerDto;
+import com.bol.interview.common.events.PlayersPairedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,25 +35,25 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, Player> playerProducerFactory() {
+    public ProducerFactory<String, PlayerDto> playerProducerFactory() {
         Map<String, Object> configProps = getDefaultConfig();
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<String, Player> playerKafkaTemplate() {
+    public KafkaTemplate<String, PlayerDto> playerKafkaTemplate() {
         return new KafkaTemplate<>(playerProducerFactory());
     }
 
 
     @Bean
-    public ProducerFactory<String, PairPlayers> pairPlayerProducerFactory() {
+    public ProducerFactory<String, PlayersPairedEvent> pairPlayerProducerFactory() {
         Map<String, Object> configProps = getDefaultConfig();
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<String, PairPlayers> pairPlayerKafkaTemplate() {
+    public KafkaTemplate<String, PlayersPairedEvent> pairPlayerKafkaTemplate() {
         return new KafkaTemplate<>(pairPlayerProducerFactory());
     }
 

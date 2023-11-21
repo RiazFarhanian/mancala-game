@@ -28,7 +28,7 @@ spring:
       spring.json.add.type.headers: false
 
 waiting-room-service:
-  player-topic: man-player-topic
-  pair-player-topic: man-pair-player-topic
-  group-id: man-pair-player-topic
+  player-topic: waiting.players
+  pair-player-topic: game.paired-players
+  group-id: WaitingPlayerProcessingGroup
 

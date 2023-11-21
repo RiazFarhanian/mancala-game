@@ -1,6 +1,6 @@
 package com.bol.interview.waitingroomservice.controller;
 
-import com.bol.interview.common.dto.Player;
+import com.bol.interview.common.dto.PlayerDto;
 import com.bol.interview.waitingroomservice.service.PlayerService;
 import com.bol.interview.waitingroomservice.service.WaitingRoomService;
 import org.springframework.http.HttpStatus;
@@ -24,9 +24,9 @@ public class WaitingRoomController {
 
     @PostMapping("/join")
     public ResponseEntity<String> join() {
-        Player requestPlayer = playerService.getCurrentPlayer();
+        PlayerDto requestPlayerDto = playerService.getCurrentPlayer();
         try{
-            String joinId = roomService.joinPlayer(requestPlayer);
+            String joinId = roomService.joinPlayer(requestPlayerDto);
             return ResponseEntity.ok(joinId);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

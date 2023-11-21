@@ -21,6 +21,7 @@
         <module>common</module>
         <module>mancala-service</module>
         <module>waiting-room-service</module>
+        <module>notification-service</module>
     </modules>
 
 </project>

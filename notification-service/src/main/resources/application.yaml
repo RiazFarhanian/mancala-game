@@ -1,0 +1,37 @@
+notification-service:
+  keycloak-base: ${KEYCLOAK_BASE_URL:http://192.168.10.79:8080}
+  kafka-topic:
+    game-notification: notification.game-notification
+  jwk: ${notification-service.keycloak-base}/realms/mancala/protocol/openid-connect/certs
+server:
+  port: 8083
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWK_SET_URI:${notification-service.keycloak-base}/realms/mancala/protocol/openid-connect/certs}
+      client:
+        provider:
+          keycloak:
+            authorization-uri: ${AUTH-URI:${notification-service.keycloak-base}/realms/master/protocol/openid-connect/auth}
+            user-info-uri: ${USER_INFO:${notification-service.keycloak-base}/realms/master/protocol/openid-connect/userinfo}
+            jwk-set-uri: ${JWK_SET_URI:${notification-service.keycloak-base}/realms/master/protocol/openid-connect/certs}
+            token-uri: ${TOKEN-URI:${notification-service.keycloak-base}/realms/mancala/protocol/openid-connect/token}
+        registration:
+          keycloak:
+            client-id: ${CLIENT_ID:mancala_rest_api}
+            authorization-grant-type: password
+            scope: openid
+            redirect-uri: ${REDIRECT-URL:http://localhost:4200}
+            client-authentication-method: post
+  kafka:
+    bootstrap-servers: 192.168.10.79:9092
+    properties:
+      spring.json.add.type.headers: false
+    consumer:
+      key-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: NotificationProcessingGroup
+      properties:
+        spring.json.trusted.packages: com.bol.interview.common.*

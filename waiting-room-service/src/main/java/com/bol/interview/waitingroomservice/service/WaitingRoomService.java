@@ -1,7 +1,8 @@
 package com.bol.interview.waitingroomservice.service;
 
-import com.bol.interview.common.dto.PairPlayers;
-import com.bol.interview.common.dto.Player;
+import com.bol.interview.common.dto.PairPlayersDto;
+import com.bol.interview.common.dto.PlayerDto;
+import com.bol.interview.common.events.PlayersPairedEvent;
 import com.bol.interview.waitingroomservice.exceptions.UnableToJoinException;
 import com.bol.interview.waitingroomservice.serdes.PlayerDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -20,9 +21,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class WaitingRoomService {
-    private final KafkaTemplate<String, PairPlayers> pairPlayerKafkaTemplate;
+    private final KafkaTemplate<String, PlayersPairedEvent> pairPlayerKafkaTemplate;
 
-    private final KafkaTemplate<String, Player> playerKafkaTemplate;
+    private final KafkaTemplate<String, PlayerDto> playerKafkaTemplate;
 
     @Value(value = "${waiting-room-service.player-topic}")
     private String playerTopic;
@@ -33,7 +34,7 @@ public class WaitingRoomService {
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    public WaitingRoomService(KafkaTemplate<String, PairPlayers> pairPlayerKafkaTemplate, KafkaTemplate<String, Player> playerKafkaTemplate) {
+    public WaitingRoomService(KafkaTemplate<String, PlayersPairedEvent> pairPlayerKafkaTemplate, KafkaTemplate<String, PlayerDto> playerKafkaTemplate) {
         this.pairPlayerKafkaTemplate = pairPlayerKafkaTemplate;
         this.playerKafkaTemplate = playerKafkaTemplate;
     }
@@ -43,18 +44,18 @@ public class WaitingRoomService {
      * This method attempts to add the specified user to the waiting room, where they
      * can be matched with other players for a game.
      *
-     * @param player The DTO (Data Transfer Object) representing the user to join.
+     * @param playerDto The DTO (Data Transfer Object) representing the user to join.
      * @throws UnableToJoinException If the user cannot be joined to the waiting room.
      */
-    public String joinPlayer(Player player) throws UnableToJoinException {
-        try (KafkaConsumer<String, Player> playerConsumer = new KafkaConsumer<>(getProperties())) {
+    public String joinPlayer(PlayerDto playerDto) throws UnableToJoinException {
+        try (KafkaConsumer<String, PlayerDto> playerConsumer = new KafkaConsumer<>(getProperties())) {
             //subscribe to player topic is queue for players
             // who joined and waiting for someone to start to play
             playerConsumer.subscribe(Collections.singletonList(playerTopic));
 
             //pole for one player for 2 second
             //we don't want to wait player to join the game
-            ConsumerRecords<String, Player> consumerRecords = playerConsumer.poll(Duration.ofSeconds(2));
+            ConsumerRecords<String, PlayerDto> consumerRecords = playerConsumer.poll(Duration.ofSeconds(2));
 
 
             if (consumerRecords.isEmpty()) {
@@ -63,20 +64,21 @@ public class WaitingRoomService {
 
                 //Generate random ID for joinID
                 String joinId = UUID.randomUUID().toString();
-                playerKafkaTemplate.send(new ProducerRecord<>(playerTopic, joinId, player));
+                playerKafkaTemplate.send(new ProducerRecord<>(playerTopic, joinId, playerDto));
                 return joinId;
             } else {
                 //The second player who is waited found, the pair player should create
-                List<Player> playerList = new ArrayList<>();
-                playerList.add(player);
+                List<PlayerDto> playerDtoList = new ArrayList<>();
+                playerDtoList.add(playerDto);
                 AtomicReference<String> joinId = new AtomicReference<>();
                 consumerRecords.forEach(record -> {
-                    playerList.add(0, record.value());
+                    playerDtoList.add(0, record.value());
                     joinId.set(record.key());
                 });
 
                 //Pair Player send for Mancala-service to start a new game
-                pairPlayerKafkaTemplate.send(pairPlayerTopic, joinId.get(), new PairPlayers(playerList));
+                PairPlayersDto pairPlayersDto= new PairPlayersDto(playerDtoList);
+                pairPlayerKafkaTemplate.send(pairPlayerTopic, joinId.get(), new PlayersPairedEvent(pairPlayersDto));
                 return joinId.get();
             }
         } catch (Exception e) {
