@@ -13,6 +13,7 @@ import java.util.List;
 public class Board {
     private List<Pit> pitList;
     private Player player;
+    private Integer score;
 
     public String getPlayerUserName() {
         return getPlayer().getUserName();

@@ -8,4 +8,6 @@ public interface GameService  {
     void newGame(String joinId, PairPlayersDto pairPlayersDto);
     GameDto makeMove(String joinId, String playerId, int selectedPitIndex);
 
+    void leave(String joinId,String playerId);
+
 }

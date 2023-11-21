@@ -1,15 +1,15 @@
 package com.bol.interview.mancalaservice.service.validation;
 
 import com.bol.interview.mancalaservice.model.GameContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
-public class GameValidateService implements GameValidation{
+@Component
+public class GameValidateCollection implements GameValidation{
     private final List<GameValidation> validationList;
 
-    public GameValidateService(List<GameValidation> validationList) {
+    public GameValidateCollection(List<GameValidation> validationList) {
         this.validationList = validationList;
     }
 

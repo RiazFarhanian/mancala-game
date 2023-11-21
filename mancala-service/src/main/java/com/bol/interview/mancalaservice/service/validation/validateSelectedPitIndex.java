@@ -4,11 +4,9 @@ import com.bol.interview.mancalaservice.configuration.MancalaConstants;
 import com.bol.interview.mancalaservice.exception.ExceptionMessages;
 import com.bol.interview.mancalaservice.exception.InvalidPitSelected;
 import com.bol.interview.mancalaservice.model.GameContext;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(4)
 public class validateSelectedPitIndex implements GameValidation {
     private final static int PIT_SCORE_INDEX = MancalaConstants.MAX_PIT_NUMBER - 1;
 

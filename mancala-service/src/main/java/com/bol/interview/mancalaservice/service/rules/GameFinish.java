@@ -37,13 +37,8 @@ public class GameFinish implements GameRules {
         if (isGameEnded(context)) {
             //Calculate final scores and put it to Big Pit
             context.getGame().getBoardList().forEach(board -> {
-                int size = board.getPitList().size();
-                Board.Pit scorePit = board.getPitList().get(size - 1);
-                for (int i = 0; i < size - 1; i++) {
-                    Board.Pit pit = board.getPitList().get(i);
-                    scorePit.setValuePlus(pit.getValue());
-                    pit.setValue(ZERO);
-                }
+                Integer score = board.getPitList().stream().map(Board.Pit::getValue).reduce(Integer::sum).orElse(0);
+                board.setScore(score);
             });
             context.getGame().setStatus(Game.Status.Finished);
             GameDto gameDto = gameMapper.gameToGameDto(context.getGame());

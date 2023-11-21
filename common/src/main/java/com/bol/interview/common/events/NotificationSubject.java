@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum NotificationSubject {
     Move("move"),
     Start("start"),
-    End("end");
+    End("end"),
+    Leave("leave");
 
 
     private final String subject;

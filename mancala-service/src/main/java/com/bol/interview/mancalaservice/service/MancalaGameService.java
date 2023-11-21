@@ -15,12 +15,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TwoPlayersGameService implements GameService {
+public class MancalaGameService implements GameService {
     private final GameRepository gameRepository;
     private final GameMapper gameMapper;
     private final GameGenerator gameGenerator;
 
-    private final GameValidation gameValidateService;
+    private final GameValidation moveGameValidation;
+
+    private final GameValidation leaveGameValidation;
 
     private final GameRuleProcessor ruleProcessor;
 
@@ -31,14 +33,15 @@ public class TwoPlayersGameService implements GameService {
     private final PairPlayerService pairPlayerService;
 
 
-    public TwoPlayersGameService(GameRepository gameRepository, GameMapper gameMapper, GameGenerator gameGenerator,
-                                 GameValidation gameValidateService, GameRuleProcessor ruleProcessor,
-                                 KafkaTemplate<PairPlayersDto, GameNotificationEvent> gameNotificationTemplate,
-                                 PairPlayerService pairPlayerService) {
+    public MancalaGameService(GameRepository gameRepository, GameMapper gameMapper, GameGenerator gameGenerator,
+                              GameValidation moveGameValidation, GameValidation leaveGameValidation, GameRuleProcessor ruleProcessor,
+                              KafkaTemplate<PairPlayersDto, GameNotificationEvent> gameNotificationTemplate,
+                              PairPlayerService pairPlayerService) {
         this.gameRepository = gameRepository;
         this.gameMapper = gameMapper;
         this.gameGenerator = gameGenerator;
-        this.gameValidateService = gameValidateService;
+        this.moveGameValidation = moveGameValidation;
+        this.leaveGameValidation = leaveGameValidation;
         this.ruleProcessor = ruleProcessor;
         this.gameNotificationTemplate = gameNotificationTemplate;
         this.pairPlayerService = pairPlayerService;
@@ -69,7 +72,7 @@ public class TwoPlayersGameService implements GameService {
         context.setGame(game);
 
         //Validate parameters with game
-        gameValidateService.validate(context);
+        moveGameValidation.validate(context);
 
         // Perform the move
         performMove(context);
@@ -84,6 +87,23 @@ public class TwoPlayersGameService implements GameService {
         gameNotificationTemplate.send(gameNotificationTopic, pairPlayersDto, new GameNotificationEvent(NotificationSubject.Move.getSubject(), context.getJoinId(), gameDto));
 
         return gameDto;
+    }
+
+    @Override
+    public void leave(String joinId, String playerId) {
+        Game game = gameRepository.findByJoinId(joinId);
+        game.setStatus(Game.Status.Left);
+        Game savedGame = gameRepository.save(game);
+        GameContext context = GameContext.builder()
+                .joinId(joinId)
+                .game(game)
+                .build();
+        leaveGameValidation.validate(context);
+
+        GameDto gameDto = gameMapper.gameToGameDto(savedGame);
+        PairPlayersDto pairPlayersDto = pairPlayerService.getPairPlayers(context,playerId);
+        gameNotificationTemplate.send(gameNotificationTopic, pairPlayersDto, new GameNotificationEvent(
+                NotificationSubject.Leave.getSubject(), context.getJoinId(), gameDto));
     }
 
     private void performMove(GameContext context) {

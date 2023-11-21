@@ -8,4 +8,6 @@ import java.util.NoSuchElementException;
 
 public interface PairPlayerService {
     PairPlayersDto getPairPlayers(GameContext context) throws NoSuchElementException;
+
+    PairPlayersDto getPairPlayers(GameContext context,String excludeUserName) throws NoSuchElementException;
 }

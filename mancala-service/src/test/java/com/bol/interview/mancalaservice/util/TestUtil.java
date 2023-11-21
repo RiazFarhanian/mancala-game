@@ -4,7 +4,7 @@ import com.bol.interview.common.dto.PlayerDto;
 import com.bol.interview.mancalaservice.entity.Board;
 import com.bol.interview.mancalaservice.entity.Game;
 import com.bol.interview.mancalaservice.entity.Player;
-import com.bol.interview.mancalaservice.entity.Score;
+
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -50,19 +50,6 @@ public class TestUtil {
         boardList.add(creatDummyBoard(secondPlayer));
         game.setBoardList(boardList);
         return game;
-    }
-
-
-    public static Score createDummyScore() {
-        Score score = new Score();
-        score.setPlayerUsername(UUID.randomUUID().toString());
-        Map<Player,Integer> playersScore = new HashMap<>();
-        Player firstPlayer = createDummyPlayer("Harry Potter");
-        Player secondPlayer = createDummyPlayer("Hermione Granger");
-        playersScore.put(firstPlayer,random.nextInt(36));
-        playersScore.put(secondPlayer,random.nextInt(36));
-        score.setPlayersScore(playersScore);
-        return score;
     }
 
     public static PlayerDto createDummyPlayerDto(String playerName) {

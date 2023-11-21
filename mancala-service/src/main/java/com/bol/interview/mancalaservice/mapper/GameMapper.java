@@ -23,6 +23,7 @@ public interface GameMapper {
 
     @Mapping(source = "pitList",target = "pitDtoList")
     @Mapping(source = "player",target = "playerName",qualifiedByName = "playerToString")
+    @Mapping(source = "score",target = "score")
     BoardDto boardToBoardDto(Board board);
 
     @Mapping(source = "order",target = "order")
