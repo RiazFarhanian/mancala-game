@@ -16,6 +16,7 @@ import java.util.List;
 @Order(1)
 public class PitProcessor implements GameRules {
     private final static int PIT_SCORE_INDEX = MancalaConstants.MAX_PIT_NUMBER - 1;
+
     @Override
     public void applyRule(GameContext context) {
         //Organize Pits in a clean way
@@ -25,18 +26,19 @@ public class PitProcessor implements GameRules {
 
     private static List<PitView> processPits(GameContext context) {
         List<PitView> pitViews = new ArrayList<>();
-        int pitViewIndex=0;
+        int pitViewIndex = 0;
 
         for (int i = 0; i < context.getGame().getBoardList().size(); i++) {
             Board board = context.getGame().getBoardList().get(i);
             for (int j = 0; j < board.getPitList().size(); j++) {
                 Board.Pit pit = board.getPitList().get(j);
                 if (pit.getOrder().equals(PIT_SCORE_INDEX) &&
-                        !board.getPlayerUserName().equals(context.getPlayerId())) {
-                    pitViewIndex++;
-                    PitView pitView = getPitView(context, pit, board, pitViews);
-                    findSelectedPitIndexInPitViewCollection(context,pitView,pitViewIndex);
-                }
+                        !board.getPlayerUserName().equals(context.getPlayerId()))
+                    continue;
+
+                PitView pitView = getPitView(context, pit, board, pitViews);
+                findSelectedPitIndexInPitViewCollection(context, pitView, pitViewIndex);
+                pitViewIndex++;
             }
             findCurrentBoardIndex(context, board, i);
         }
@@ -56,7 +58,7 @@ public class PitProcessor implements GameRules {
     }
 
     private static void findCurrentBoardIndex(GameContext context, Board board, int index) {
-        if (board.getPlayerUserName().equals(context.getPlayerId())){
+        if (board.getPlayerUserName().equals(context.getPlayerId())) {
             context.setCurrentBoardIndex(index);
         }
     }
@@ -67,7 +69,7 @@ public class PitProcessor implements GameRules {
             if (pitView.getValue() == 0) {
                 throw new PitIsEmpty(ExceptionMessages.PIT_IS_EMPTY);
             }
-            context.setSelectedPitIndexInGame(index);
+            context.setSelectedPitIndexInPitView(index);
             context.setSelectedPit(pitView);
         }
     }

@@ -30,7 +30,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.10.79:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -69,6 +69,8 @@ services:
   eureka:
     build:
       context: ./eureka  # Directory containing the Eureka service Dockerfile
+    image: mancala-game/eureka:dev.1.0
+    container_name: eureka.v.1.0
     ports:
       - "8761:8761"  # Expose Eureka port
 
@@ -76,6 +78,8 @@ services:
   api-gateway:
     build:
       context: ./api-gateway  # Directory containing the API Gateway Dockerfile
+    image: mancala-game/api-gateway:dev.1.0
+    container_name: api-gateway.v.1.0
     ports:
       - "7070:7070"  # Expose API Gateway port
     depends_on:
@@ -89,26 +93,73 @@ services:
   # Mancala Service
   mancala-service:
     build:
-      context: ./mancala-service  # Directory containing the Mancala Service Dockerfile
+      context: .
+      dockerfile: Dockerfile.mancala-service  # Directory containing the Mancala Service Dockerfile
+    image: mancala-game/mancala-service:dev.1.0
+    container_name: mancala-service.v.1.0
     ports:
       - "8081:8081"  # Expose Mancala Service port
     depends_on:
       - eureka
-      - postgres
+      - mongodb
+      - kafka
     environment:
-      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
-      DATASOURCE_URL: jdbc:postgresql://postgres:5432/mancala_db
-      DATASOURCE_USERNAME: bol_user
-      DATASOURCE_PASSWORD: bol_password
       SERVER_PORT: 8081
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      KEYCLOAK_BASE_URL: http://keycloak:8080
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
+      MONGO-HOST: mongodb
+      MONGO-PORT: 27017
+      MONGO-DB: mancala
+      MONGO-USER: mancala
+      MONGO-PASSWORD: mancala_password
+      DEBUG_MODE: true
 
+  # Notification Service
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.notification-service  # Directory containing the Notification Service Dockerfile
+    image: mancala-game/notification-service:dev.1.0
+    container_name: notification-service.v.1.0
+    ports:
+      - "8082:8082"  # Expose Notification Service port
+    depends_on:
+      - eureka
+      - kafka
+    environment:
+      SERVER_PORT: 8082
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      KEYCLOAK_BASE_URL: http://keycloak:8080
+
+
+  #waiting-room-service
+  waiting-room-service:
+      build:
+        context: .
+        dockerfile: Dockerfile.waiting-room-service  # Directory containing the waiting-room Service Dockerfile
+      image: mancala-game/waiting-room-service:dev.1.0
+      container_name: waiting-room-service.v.1.0
+      ports:
+      - "8083:8083"  # Expose Waiting Room Service port
+      depends_on:
+      - eureka
+      - kafka
+      environment:
+        SERVER_PORT: 8083
+        EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka:8761/eureka
+        KEYCLOAK_BASE_URL: http://keycloak:8080
+        SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
 
   #Angular App
   angular-app:
     build:
       context: ./angular-app # Directory containing the angular-app Dockerfile
+    image: mancala-game/angular-app:dev.1.1
+    container_name: angular-app.v.1.1
     ports:
-      - "4200:80"
+      - "4200:4200"
     depends_on:
       - keycloak
 

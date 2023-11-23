@@ -32,6 +32,7 @@ public class TwoPlayersGameGeneratorService implements GameGenerator {
         game.setVersion(1L);
         game.setCreatedDate(LocalDateTime.now());
         game.setLastModifiedDate(LocalDateTime.now());
+        game.setTurnPlayerId(pairPlayersDto.playerDtoList().get(0).userName());
 
         game.setStatus(Game.Status.New);
         game.setJoinId(joinId);

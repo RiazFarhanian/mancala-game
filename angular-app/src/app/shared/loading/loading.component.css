@@ -1,0 +1,9 @@
+.loading-hdr{
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    color: #000;
+    border-radius: 0.2rem;
+    border: 0.1rem solid #ddd;
+    width: max-content;
+    margin:auto;
+}

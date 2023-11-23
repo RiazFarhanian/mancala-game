@@ -1,11 +1,17 @@
 notification-service:
   keycloak-base: ${KEYCLOAK_BASE_URL:http://192.168.10.79:8080}
   kafka-topic:
-    game-notification: notification.game-notification
+    game-notification: ${GAME_NOTIFICATION_TOPIC:notification.game-notification}
   jwk: ${notification-service.keycloak-base}/realms/mancala/protocol/openid-connect/certs
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_DEFAULT-ZONE:http://localhost:8761/eureka/}
 server:
   port: 8083
 spring:
+  application:
+      name: notification-service
   security:
     oauth2:
       resourceserver:
@@ -35,3 +41,6 @@ spring:
       group-id: NotificationProcessingGroup
       properties:
         spring.json.trusted.packages: com.bol.interview.common.*
+logging:
+  level:
+    com.bol.interview.notificationservice: INFO

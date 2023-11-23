@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/api/game")
+@RequestMapping
 public class MancalaGameController {
 
     private final GameService gameService;

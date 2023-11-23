@@ -4,3 +4,18 @@
     color: blueviolet;
 }
 
+.home-hdr {
+    background-image: url(../../../../assets/images/bg.webp);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center center;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.bg-op-70 {
+    background-image: url(../../../../assets/images/bg-70-op.png);
+    background-repeat: repeat;
+    background-color: #e4e0f8!important;
+}

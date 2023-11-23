@@ -4,19 +4,17 @@ import com.bol.interview.common.dto.PairPlayersDto;
 import com.bol.interview.common.dto.PlayerDto;
 import com.bol.interview.common.events.PlayersPairedEvent;
 import com.bol.interview.waitingroomservice.exceptions.UnableToJoinException;
-import com.bol.interview.waitingroomservice.serdes.PlayerDeserializer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.streams.StreamsConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -25,18 +23,17 @@ public class WaitingRoomService {
 
     private final KafkaTemplate<String, PlayerDto> playerKafkaTemplate;
 
-    @Value(value = "${waiting-room-service.player-topic}")
-    private String playerTopic;
+    private final KafkaConsumer<String, PlayerDto> playerConsumer;
+
     @Value(value = "${waiting-room-service.pair-player-topic}")
     private String pairPlayerTopic;
-    @Value(value = "${waiting-room-service.group-id}")
-    private String groupId;
-    @Value(value = "${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    @Value(value = "${waiting-room-service.player-topic}")
+    private String playerTopic;
 
-    public WaitingRoomService(KafkaTemplate<String, PlayersPairedEvent> pairPlayerKafkaTemplate, KafkaTemplate<String, PlayerDto> playerKafkaTemplate) {
+    public WaitingRoomService(KafkaTemplate<String, PlayersPairedEvent> pairPlayerKafkaTemplate, KafkaTemplate<String, PlayerDto> playerKafkaTemplate, KafkaConsumer<String, PlayerDto> playerConsumer) {
         this.pairPlayerKafkaTemplate = pairPlayerKafkaTemplate;
         this.playerKafkaTemplate = playerKafkaTemplate;
+        this.playerConsumer = playerConsumer;
     }
 
     /**
@@ -48,56 +45,35 @@ public class WaitingRoomService {
      * @throws UnableToJoinException If the user cannot be joined to the waiting room.
      */
     public String joinPlayer(PlayerDto playerDto) throws UnableToJoinException {
-        try (KafkaConsumer<String, PlayerDto> playerConsumer = new KafkaConsumer<>(getProperties())) {
-            //subscribe to player topic is queue for players
-            // who joined and waiting for someone to start to play
-            playerConsumer.subscribe(Collections.singletonList(playerTopic));
+        //pole for one player for 2 second
+        //we don't want to wait player to join the game
+        ConsumerRecords<String, PlayerDto> consumerRecords = playerConsumer.poll(Duration.ofSeconds(1));
 
-            //pole for one player for 2 second
-            //we don't want to wait player to join the game
-            ConsumerRecords<String, PlayerDto> consumerRecords = playerConsumer.poll(Duration.ofSeconds(2));
+        if (consumerRecords.isEmpty()) {
+            //if no player available to wait, so the player
+            // should wait for someone to join
 
+            //Generate random ID for joinID
+            String joinId = UUID.randomUUID().toString();
+            playerKafkaTemplate.send(new ProducerRecord<>(playerTopic, joinId, playerDto));
+            return joinId;
+        } else {
+            playerConsumer.commitSync();
 
-            if (consumerRecords.isEmpty()) {
-                //if no player available to wait, so the player
-                // should wait for someone to join
+            //The second player who is waited found, the pair player should create
+            List<PlayerDto> playerDtoList = new ArrayList<>();
+            playerDtoList.add(playerDto);
+            AtomicReference<String> joinId = new AtomicReference<>();
+            consumerRecords.forEach(record -> {
+                playerDtoList.add(0, record.value());
+                joinId.set(record.key());
+            });
 
-                //Generate random ID for joinID
-                String joinId = UUID.randomUUID().toString();
-                playerKafkaTemplate.send(new ProducerRecord<>(playerTopic, joinId, playerDto));
-                return joinId;
-            } else {
-                //The second player who is waited found, the pair player should create
-                List<PlayerDto> playerDtoList = new ArrayList<>();
-                playerDtoList.add(playerDto);
-                AtomicReference<String> joinId = new AtomicReference<>();
-                consumerRecords.forEach(record -> {
-                    playerDtoList.add(0, record.value());
-                    joinId.set(record.key());
-                });
-
-                //Pair Player send for Mancala-service to start a new game
-                PairPlayersDto pairPlayersDto= new PairPlayersDto(playerDtoList);
-                pairPlayerKafkaTemplate.send(pairPlayerTopic, joinId.get(), new PlayersPairedEvent(pairPlayersDto));
-                return joinId.get();
-            }
-        } catch (Exception e) {
-            throw new UnableToJoinException(e);
+            //Pair Player send for Mancala-service to start a new game
+            PairPlayersDto pairPlayersDto = new PairPlayersDto(playerDtoList);
+            pairPlayerKafkaTemplate.send(pairPlayerTopic, joinId.get(), new PlayersPairedEvent(pairPlayersDto));
+            return joinId.get();
         }
     }
 
-
-    private Properties getProperties() {
-        Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "PlayerConsumer");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-
-        props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, PlayerDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        // Set the maximum number of records to poll
-        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
-
-        return props;
-    }
 }

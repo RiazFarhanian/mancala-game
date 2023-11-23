@@ -1,7 +1,9 @@
 mancala:
   keycloak-base: ${KEYCLOAK_BASE_URL:http://192.168.10.79:8080}
+  new-game-wait-time: ${WAIT_TIME:3000}
+  debug-mode: ${DEBUG_MODE:true}
   kafka-topic:
-    game-notification: notification.game-event
+    game-notification: notification.game-notification
     pair-player-topic: game.paired-players
 eureka:
   client:
@@ -29,9 +31,9 @@ spring:
       client:
         provider:
           keycloak:
-            authorization-uri: ${AUTH-URI:${mancala.keycloak-base}/realms/master/protocol/openid-connect/auth}
-            user-info-uri: ${USER_INFO:${mancala.keycloak-base}/realms/master/protocol/openid-connect/userinfo}
-            jwk-set-uri: ${JWK_SET_URI:${mancala.keycloak-base}/realms/master/protocol/openid-connect/certs}
+            authorization-uri: ${AUTH-URI:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/auth}
+            user-info-uri: ${USER_INFO:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/userinfo}
+            jwk-set-uri: ${JWK_SET_URI:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/certs}
             token-uri: ${TOKEN-URI:${mancala.keycloak-base}/realms/mancala/protocol/openid-connect/token}
         registration:
           keycloak:

@@ -20,21 +20,28 @@ public class CaptureStone implements GameRules {
     public void applyRule(GameContext context) {
         List<PitView> organizedPits = context.getPitViews();
         PitView lastPit = organizedPits.get(context.getLastPitIndex());
-        Board.Pit opponentPit = getOpponentPit(context,lastPit);
-        if (lastPit.getValue().equals(ONE) &&
+        if (!lastPit.getIsScorePit() &&
                 lastPit.getPlayerUserName().equals(context.getPlayerId()) &&
-                opponentPit.getValue() != 0) {
-            lastPit.setValuePlus(opponentPit.getValue());
+                lastPit.getValue().equals(ONE) ) {
+            Board.Pit opponentPit = getOpponentFronPitForLastPit(context);
+            if (opponentPit.getValue() != 0) {
+                lastPit.setValuePlus(opponentPit.getValue());
+                opponentPit.setValue(0);
+            }
+
         }
     }
 
-    public Board.Pit getOpponentPit(GameContext context,PitView pit) {
+    private Board.Pit getOpponentFronPitForLastPit(GameContext context) {
         Board nextBoard = context.getNextBoard();
-        int pitIndex = MancalaConstants.MAX_PIT_NUMBER - 2 - pit.getOrder();
-        return nextBoard.getPitList().stream()
-                .filter(pit1 -> pit1.getOrder().equals(pitIndex))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException(ExceptionMessages.OPPONENT_PIT_NOT_FOUND));
+
+        int pitIndex = MancalaConstants.DEFAULT_SMALL_PIT_VALUE - context.getLastPit().getPit().getOrder();;
+        for (int i = 0; i < nextBoard.getPitList().size(); i++) {
+            if (nextBoard.getPitList().get(i).getOrder().equals(pitIndex)) {
+                return nextBoard.getPitList().get(i);
+            }
+        }
+        throw new NoSuchElementException(ExceptionMessages.OPPONENT_PIT_NOT_FOUND);
     }
 
 }

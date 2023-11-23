@@ -25,8 +25,12 @@ public class GameFinish implements GameRules {
     @Value("${mancala.kafka-topic.game-notification}")
     private String gameNotificationTopic;
 
+    @Value("${mancala.debug-mode}")
+    private boolean isDebugMode;
+
     private final KafkaTemplate<PairPlayersDto, GameNotificationEvent> gameNotificationTemplate;
-    public GameFinish(PairPlayerService pairPlayerService, GameMapper gameMapper,KafkaTemplate<PairPlayersDto, GameNotificationEvent> gameNotificationTemplate) {
+
+    public GameFinish(PairPlayerService pairPlayerService, GameMapper gameMapper, KafkaTemplate<PairPlayersDto, GameNotificationEvent> gameNotificationTemplate) {
         this.pairPlayerService = pairPlayerService;
         this.gameMapper = gameMapper;
         this.gameNotificationTemplate = gameNotificationTemplate;
@@ -34,7 +38,7 @@ public class GameFinish implements GameRules {
 
     @Override
     public void applyRule(GameContext context) {
-        if (isGameEnded(context)) {
+        if (isGameEnded(context) || (isDebugMode && isGameEndedFake(context))) {
             //Calculate final scores and put it to Big Pit
             context.getGame().getBoardList().forEach(board -> {
                 Integer score = board.getPitList().stream().map(Board.Pit::getValue).reduce(Integer::sum).orElse(0);
@@ -45,16 +49,20 @@ public class GameFinish implements GameRules {
             gameNotificationTemplate.send(gameNotificationTopic,
                     pairPlayerService.getPairPlayers(context),
                     new GameNotificationEvent(NotificationSubject.End.getSubject(), context.getJoinId(), gameDto));
-
         }
     }
 
-    public boolean isGameEnded(GameContext context){
+    private boolean isGameEnded(GameContext context) {
         String userName = context.getCurrentBoard().getPlayerUserName();
         return context.getPitViews().stream()
                 .filter(pit -> pit.getPlayerUserName().equals(userName) &&
                         !pit.getIsScorePit())
                 .allMatch(pit -> pit.getValue().equals(ZERO));
+    }
+
+    private boolean isGameEndedFake(GameContext context) {
+        return context.getGame().getBoardList().get(0).getPitList().get(6).getValue() > 10 ||
+                context.getGame().getBoardList().get(1).getPitList().get(6).getValue() > 10;
     }
 
 }

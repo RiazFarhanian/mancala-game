@@ -27,7 +27,7 @@ export function initializer(keycloak: KeycloakService): () => Promise<any> {
             //      </body>
             // </html>
             onLoad: 'check-sso',
-            checkLoginIframe: false
+            checkLoginIframe: false,
             // silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
           },
           // By default, the keycloak-angular library add 'Authorization: Bearer TOKEN' header to all http requests

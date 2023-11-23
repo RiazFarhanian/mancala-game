@@ -1,20 +1,25 @@
-<mat-card *ngIf="!isUserAuthenticated()" class="ma-1">
-    <mat-card-header>
-      <mat-card-title>Mancala</mat-card-title>
-      <mat-card-subtitle>Ancient African board game strategy</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p>
-          Mancala, also known as Kalaha, is an ancient board game with roots in Africa and the Middle East. It has been played for centuries, used for entertainment and education. The game has diverse regional variations and has spread worldwide, with Mancala being one of the most recognized versions. It's appreciated for its simplicity and strategic depth.
-      </p>
-    </mat-card-content>
-    <mat-card-actions class="text-center ma-1">
-        <button 
-            (click)="authenticate()"
-            mat-raised-button 
-            color="primary" 
-            class="mat-button-large large-button">Play</button>
-    </mat-card-actions>
-</mat-card>
-  
-<app-board *ngIf="isUserAuthenticated()"></app-board>
+<div class="home-hdr" *ngIf="!isUserAuthenticated()" >
+  <mat-grid-list cols="3" gutterSize="10px">
+    <mat-grid-tile>
+  <mat-card class="ma-1 bg-op-70 pos-abs">
+      <mat-card-header>
+        <mat-card-title>Mancala</mat-card-title>
+        <mat-card-subtitle>Ancient African board game strategy</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="text-justify">
+            Mancala, also known as Kalaha, is an ancient board game with roots in Africa and the Middle East. It has been played for centuries, used for entertainment and education. The game has diverse regional variations and has spread worldwide, with Mancala being one of the most recognized versions. It's appreciated for its simplicity and strategic depth.
+        </p>
+      </mat-card-content>
+      <mat-card-actions class="text-center ma-1">
+          <button 
+              (click)="authenticate()"
+              mat-raised-button 
+              color="primary" 
+              class="mat-button-large large-button">Login</button>
+      </mat-card-actions>
+  </mat-card>
+</mat-grid-tile>
+</mat-grid-list>
+</div>
+

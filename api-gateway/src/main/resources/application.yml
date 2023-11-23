@@ -1,17 +1,21 @@
 mancala:
-  keycloak-base: ${KEYCLOAK_BASE_URL:http://localhost:8080}
+  keycloak-base: ${KEYCLOAK_BASE_URL:http://192.168.10.79:8080}
 spring:
   application:
     name: api-gateway
   cloud:
     gateway:
+      default-filters:
+        - RewritePath=/api/v1/.*?/(?<remaining>.*), /$\{remaining}
       routes:
         - id: mancala-service
           uri: lb://mancala-service
           predicates:
-            - Path=/mancala-service/**
-          filters:
-            - RewritePath=/mancala-service/(?<remaining>.*), /$\{remaining}
+            - Path=/api/v1/mancala/**
+        - id: waiting-room
+          uri: lb://waiting-room
+          predicates:
+            - Path=/api/v1/waiting-room/**
       discovery:
         locator:
           enabled: true
@@ -40,3 +44,6 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_DEFAULT-ZONE:http://localhost:8761/eureka/}
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

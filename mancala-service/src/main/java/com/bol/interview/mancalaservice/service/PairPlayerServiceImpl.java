@@ -8,7 +8,6 @@ import com.bol.interview.mancalaservice.entity.Game;
 import com.bol.interview.mancalaservice.exception.ExceptionMessages;
 import com.bol.interview.mancalaservice.mapper.PlayerMapper;
 import com.bol.interview.mancalaservice.model.GameContext;
-
 import org.springframework.stereotype.Component;
 
 import java.util.List;

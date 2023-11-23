@@ -2,7 +2,13 @@ mancala:
   keycloak-base: ${KEYCLOAK_BASE_URL:http://192.168.10.79:8080}
 server:
   port: 8082
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_DEFAULT-ZONE:http://localhost:8761/eureka/}
 spring:
+  application:
+    name: waiting-room
   security:
     oauth2:
       resourceserver:

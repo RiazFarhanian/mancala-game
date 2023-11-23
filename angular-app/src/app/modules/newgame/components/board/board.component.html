@@ -1,0 +1,63 @@
+<div class="board">
+  <div *ngIf="finalResult.icon === ''">
+    <mat-card-actions class="text-center ma-1">
+      <button 
+          (click)="leaveTheGame()"
+          mat-raised-button 
+          color="warn" 
+          [class.disabled]="isWaiting" 
+          [disabled]="isWaiting" 
+          class="mat-button-large large-button">Leave the game</button>
+          <button 
+          mat-raised-button 
+          [color]="turning.color" 
+          [class.disabled]="isWaiting"
+          [disabled]="isWaiting" 
+          class="mat-button-large large-button ml-05">{{ turning.text }}</button>
+    </mat-card-actions>
+    <div class="game-board">
+      <div class="player player-1" [class.disabled]="isWaiting" >
+        <h2>{{players[0].split(' ')[0]}}{{playerSuffix[players[0]].suf}}</h2>
+        <mat-card class="store">{{ getPlayerStore(players[0]) }}</mat-card>
+      </div>
+      <div class="pits-container">
+        <div class="pits rtl">
+          <mat-card 
+            class="pit player-1" 
+            [class.disabled]="isWaiting" 
+            *ngFor="let pit of getPits(players[0]); let i = index"
+            (click)="playerPitClick(playerSuffix[players[0]].id, i)">
+            <b class="pit-number">{{ pit }}</b>
+          </mat-card>
+        </div>
+        <div class="message-container">
+          <app-loading *ngIf="isWaiting" [message]="loadingMessage"></app-loading>
+        </div>
+        <div class="pits">
+          <mat-card 
+            class="pit player-2" 
+            [class.disabled]="isWaiting" 
+            *ngFor="let pit of getPits(players[1]); let i = index"
+            (click)="playerPitClick(playerSuffix[players[1]].id, i)">
+            <b class="pit-number">{{ pit }}</b>
+          </mat-card>
+        </div>
+      </div>
+      <div class="player player-2" [class.disabled]="isWaiting" >
+        <h2>{{players[1].split(' ')[0]}}{{playerSuffix[players[1]].suf}}</h2>
+        <mat-card class="store">{{ getPlayerStore(players[1]) }}</mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="final-result-hdr" *ngIf="finalResult.icon !== ''">
+  <img [src]="'../../assets/images/' + finalResult.icon" />
+  <h1>{{ finalResult.text }}</h1>
+  <p>
+    <button
+    (click)="reload()"
+    mat-raised-button 
+    color="primary" 
+    class="mat-button-large large-button">Start new game</button>
+  </p>
+</div>

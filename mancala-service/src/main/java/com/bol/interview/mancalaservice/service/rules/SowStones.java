@@ -17,13 +17,14 @@ public class SowStones implements GameRules {
 
         //sow these stones one by one into the following pits, including their own big pit
         int stonesToDistribute = context.getSelectedPit().getValue();
+        context.getSelectedPit().getPit().setValue(0);
         int size = context.getSelectedPitIndexInPitView() + stonesToDistribute + 1;
         int index = -1;
         for (int i = context.getSelectedPitIndexInPitView() + 1; i < size; i++) {
             index = (i < pitViews.size()) ? i : i - pitViews.size();
             pitViews.get(index).setValuePlus(ONE);
         }
-        context.setSelectedPit(pitViews.get(index));
+        context.setLastPit(pitViews.get(index));
         context.setLastPitIndex(index);
     }
 }

@@ -1,0 +1,735 @@
+{
+	"info": {
+		"_postman_id": "a6ccc42d-ef68-40f6-832d-bf125c2e5b7f",
+		"name": "Mancala Game",
+		"description": "The Mancala Game Application is a multiplayer implementation of the classic Mancala game using a microservices architecture. It offers a scalable and modular approach to handle various aspects of the game, including player interactions, game logic, and matchmaking.\n\nKey Features\n\n1. **Microservices Architecture:**\n    - Utilizes a set of microservices, including Eureka for service discovery, Spring API Gateway for routing, Keycloak for user management and security, and Kafka for asynchronous messaging.\n2. **Mancala Service:**\n    - Contains the core logic of the Mancala game, handling player moves, game state, and scoring.\n3. **Waiting Room Service:**\n    - Facilitates online matchmaking, allowing players to join a waiting room and find opponents for Mancala games.\n4. **Notification Service:**\n    - Implements WebSocket communication for real-time updates, providing players with online notifications during gameplay.\n5. **Angular App:**\n    - Offers a visually appealing and user-friendly interface for players to enjoy the Mancala game.\n6. **API Endpoints:**\n    - Provides a set of API endpoints for actions such as making a move, leaving a game, retrieving scores, and joining the waiting room.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5011858"
+	},
+	"item": [
+		{
+			"name": "api-gateway",
+			"item": [
+				{
+					"name": "HelloWorld",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "accessToken",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "riaz.farhanian@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7070/api/v1/mancala/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7070",
+							"path": [
+								"api",
+								"v1",
+								"mancala",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Game Move",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://{{base_url}}:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "riaz.farhanian@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"joinId\":\"b93fee30-d097-44d3-9091-9f6a62b2b6de\",\"selectedPitIndex\":1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7070/api/v1/mancala/move",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7070",
+							"path": [
+								"api",
+								"v1",
+								"mancala",
+								"move"
+							]
+						},
+						"description": "Initiates a move in the Mancala game. Players provide the game ID, their player ID, and the index of the pit they want to move stones from. This endpoint is used to progress the game."
+					},
+					"response": []
+				},
+				{
+					"name": "Game Leave",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://{{base_url}}:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "riaz.farhanian@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"joinId\":\"b93fee30-d097-44d3-9091-9f6a62b2b6de\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7070/api/v1/mancala/leave",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7070",
+							"path": [
+								"api",
+								"v1",
+								"mancala",
+								"leave"
+							]
+						},
+						"description": "Allows a player to leave an ongoing Mancala game. The player needs to provide the game ID and their player ID. This can be used when a player decides to exit the game before its conclusion."
+					},
+					"response": []
+				},
+				{
+					"name": "Game Scores",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "riaz.farhanian@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7070/api/v1/mancala/scores",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7070",
+							"path": [
+								"api",
+								"v1",
+								"mancala",
+								"scores"
+							]
+						},
+						"description": "Retrieves the scores of the Mancala game. Players provide the game ID to get the current scores. This endpoint is useful for checking the progress and results of a Mancala game."
+					},
+					"response": []
+				},
+				{
+					"name": "Join Game",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://{{base_url}}:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "samira.hosseinpour@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7070/api/v1/waiting-room/join",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7070",
+							"path": [
+								"api",
+								"v1",
+								"waiting-room",
+								"join"
+							]
+						},
+						"description": "Allows a player to join the waiting room to find an opponent. The player provides their player ID to enter the queue for matching. This endpoint is used for initiating the process of finding an opponent for a Mancala game."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "keycloak",
+			"item": [
+				{
+					"name": "OAuth Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "mancala_rest_api",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "riaz.farhanian@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/realms/mancala/protocol/openid-connect/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"realms",
+								"mancala",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						},
+						"description": "Clients, such as the Mancala Game microservices, can make a POST request to this endpoint with the appropriate credentials to obtain an access token. This token is then used to access secured resources within the application.\n\n### Request Parameters\n\n- `grant_type`: The type of OAuth 2.0 grant being requested.\n    \n- `client_id`: The client ID of the requesting client (e.g., Mancala Game Application).\n    \n- `client_secret`: The client secret used to authenticate the client.\n    \n- `username`: The Keycloak username.\n    \n- `password`: The Keycloak user's password."
+					},
+					"response": []
+				}
+			],
+			"description": "### Overview\n\nThe Keycloak Token Endpoint is used for obtaining OAuth 2.0 access tokens from the Keycloak server. It plays a crucial role in the Mancala Game Application for user authentication and securing access to protected resources."
+		},
+		{
+			"name": "mancala-service",
+			"item": [
+				{
+					"name": "Game Move",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://{{base_url}}:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "riaz.farhanian@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"joinId\":\"b93fee30-d097-44d3-9091-9f6a62b2b6de\",\"selectedPitIndex\":1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/move",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"move"
+							]
+						},
+						"description": "Initiates a move in the Mancala game. Players provide the game ID, their player ID, and the index of the pit they want to move stones from. This endpoint is used to progress the game."
+					},
+					"response": []
+				},
+				{
+					"name": "Game Leave",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "riaz.farhanian@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"joinId\":\"b93fee30-d097-44d3-9091-9f6a62b2b6de\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/leave",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"leave"
+							]
+						},
+						"description": "Allows a player to leave an ongoing Mancala game. The player needs to provide the game ID and their player ID. This can be used when a player decides to exit the game before its conclusion."
+					},
+					"response": []
+				}
+			],
+			"description": "Contains the core logic of the Mancala game, handling player moves, game state, and scoring"
+		},
+		{
+			"name": "WaitingRoomService",
+			"item": [
+				{
+					"name": "join",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:8080/realms/mancala/protocol/openid-connect/token",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "samira.hosseinpour@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Sam500()@!",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "mancala_rest_api",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "mancala-token",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/join",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"join"
+							]
+						},
+						"description": "Allows a player to join the waiting room to find an opponent. The player provides their player ID to enter the queue for matching. This endpoint is used for initiating the process of finding an opponent for a Mancala game."
+					},
+					"response": []
+				}
+			],
+			"description": "Allows a player to join the waiting room to find an opponent. The player provides their player ID to enter the queue for matching. This endpoint is used for initiating the process of finding an opponent for a Mancala game."
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

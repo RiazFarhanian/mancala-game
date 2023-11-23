@@ -1,0 +1,16 @@
+<mat-card class="ma-1">
+  <mat-card-header class="mb-1">
+    <mat-card-title>Scores</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="mb-1">
+  <table class="mat-elevation-z8">
+      <tbody>
+        <tr *ngFor="let row of dataSource; let i = index"  >
+          <td>{{ row.date}}</td>
+          <td>{{ row.yourScore}}</td>
+          <td>{{ row.opponentScore}}</td>
+        </tr>
+      </tbody>
+  </table>
+  </mat-card-content>
+</mat-card>

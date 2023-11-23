@@ -1,6 +1,7 @@
 package com.bol.interview.notificationservice.service;
 
 import com.bol.interview.common.dto.PairPlayersDto;
+import com.bol.interview.common.dto.PlayerDto;
 import com.bol.interview.common.events.GameNotificationEvent;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -17,12 +18,12 @@ public class WebSocketNotificationService implements NotificationService {
 
     @Override
     public void notifyPlayers(PairPlayersDto pairPlayersDto, GameNotificationEvent gameNotificationEvent) {
-        pairPlayersDto.playerDtoList().forEach(playerDto -> pushMessageToSingleUser(playerDto.userName(), gameNotificationEvent.joinId(), gameNotificationEvent));
+        pairPlayersDto.playerDtoList().forEach(playerDto -> pushMessageToSingleUser(playerDto, gameNotificationEvent.joinId(), gameNotificationEvent));
     }
 
-    private void pushMessageToSingleUser(String username, String joinId, GameNotificationEvent gameNotificationEvent) {
-        String destination = "/app/user/" + username + "/" + joinId;
-        log.debug("Sending message on " + destination + " to user: " + username + ": " + gameNotificationEvent);
+    private void pushMessageToSingleUser(PlayerDto playerDto, String joinId, GameNotificationEvent gameNotificationEvent) {
+        String destination = "/app/user/" + playerDto.userName() + "/" + joinId;
+        log.info("Sending message on " + destination + " to user: " + playerDto + ": " + gameNotificationEvent);
         notificationTemplate.convertAndSend(destination, gameNotificationEvent);
 
     }

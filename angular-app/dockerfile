@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.4
 
-# Stage 1: Building Angular app
+#Building Angular app
 #Latest Node that work with Angular CLI 16.2.9
-FROM node:18.18.2-slim as builder
+FROM node:18.18.2-slim
 
 #Create project Folder and Copy angular files into it
 RUN mkdir /project
@@ -11,23 +11,12 @@ RUN mkdir /src
 COPY *.json ./
 COPY ./src ./src
 
+
 # Install Angular CLI globally
 RUN npm install -g @angular/cli@16.2.9
 
 # Load and Install all necessary modules
 RUN npm ci
 
-## Build the Angular app for production
-RUN ng build
-
-# Stage 2: Serve Angular app on nginx
-FROM nginx:alpine
-
-# Copy built Angular app from the builder stage
-COPY --from=builder /project/dist/mancala /usr/share/nginx/html
-
-# Expose the default Nginx port
-EXPOSE 80
-
-# Start Nginx when the container starts
-CMD ["nginx", "-g", "daemon off;"]
+# Build Angular app
+CMD ng serve --disable-host-check --host 0.0.0.0

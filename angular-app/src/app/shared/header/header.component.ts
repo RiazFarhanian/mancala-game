@@ -14,7 +14,7 @@ export class HeaderComponent {
     this.authenticationService.logout();
   }
 
-  public login(){
-    
+  isUserAuthenticated() : boolean {
+    return this.authenticationService.getUsername() !== '';
   }
 }

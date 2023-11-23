@@ -33,4 +33,13 @@ class PlayerDtoMapperTest {
         assertEquals(player.getName(),playerDto.name());
         assertEquals(player.getUserName(),playerDto.userName());
     }
+
+    @Test
+    void playerToPlayerDto() {
+        Player player = TestUtil.createDummyPlayer("Harry Potter");
+        PlayerDto playerDto = playerMapper.playerToPlayerDto(player);
+        assertNotNull(playerDto);
+        assertEquals(player.getName(),playerDto.name());
+        assertEquals(player.getUserName(),playerDto.userName());
+    }
 }

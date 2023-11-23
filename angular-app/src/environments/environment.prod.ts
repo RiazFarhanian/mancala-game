@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   apiUrl: '/api',
   keycloak: {
     // Url of the Identity Provider
@@ -8,5 +8,6 @@ export const environment = {
     realm: 'mancala',
     clientId: 'mancala_web_ui'
   },
-  baseUrl: 'http://localhost:4200'
+  baseUrl: 'http://localhost:4200',
+  websocketUrl: 'http://localhost:8082/socket',
 };

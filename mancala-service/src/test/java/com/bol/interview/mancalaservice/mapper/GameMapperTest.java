@@ -1,6 +1,8 @@
 package com.bol.interview.mancalaservice.mapper;
 
+import com.bol.interview.common.dto.BoardDto;
 import com.bol.interview.common.dto.GameDto;
+import com.bol.interview.mancalaservice.entity.Board;
 import com.bol.interview.mancalaservice.entity.Game;
 import com.bol.interview.mancalaservice.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,16 +35,37 @@ class GameMapperTest {
         assertNotNull(gameDto);
         assertEquals(game.getJoinId(),gameDto.joinId());
         assertEquals(game.getTurnPlayerId(),gameDto.turnPlayerId());
-        game.getBoardList().forEach(board -> {
-
-        });
-
-        //TODO: Compare game attributes with gameDto
-
-
+        for (int i = 0; i < game.getBoardList().size(); i++) {
+            Board board = game.getBoardList().get(i);
+            BoardDto boardDto = gameDto.boardList().get(i);
+            assertEquals(boardDto.playerDto().name(),board.getPlayer().getName());
+            for (int j = 0; j < board.getPitList().size(); j++) {
+                BoardDto.PitDto pitDto = boardDto.pitDtoList().get(j);
+                Board.Pit pit = board.getPitList().get(j);
+                assertEquals(pit.getOrder(),pitDto.order());
+                assertEquals(pit.getValue(),pitDto.value());
+            }
+        }
     }
 
     @Test
     void boardToBoardDto() {
+        Board board = game.getBoardList().get(0);
+        BoardDto boardDto = gameMapper.boardToBoardDto(board);
+        assertEquals(boardDto.playerDto().name(),board.getPlayer().getName());
+        for (int j = 0; j < board.getPitList().size(); j++) {
+            BoardDto.PitDto pitDto = boardDto.pitDtoList().get(j);
+            Board.Pit pit = board.getPitList().get(j);
+            assertEquals(pit.getOrder(),pitDto.order());
+            assertEquals(pit.getValue(),pitDto.value());
+        }
+    }
+
+    @Test
+    void pitToPitDto(){
+        Board.Pit pit = game.getBoardList().get(0).getPitList().get(0);
+        BoardDto.PitDto pitDto = gameMapper.pitToPitDto(pit);
+        assertEquals(pit.getOrder(),pitDto.order());
+        assertEquals(pit.getValue(),pitDto.value());
     }
 }

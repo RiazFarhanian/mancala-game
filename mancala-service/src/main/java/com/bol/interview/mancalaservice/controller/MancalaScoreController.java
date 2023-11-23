@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping
 public class MancalaScoreController {
     private final PlayerService jwtPlayerService;
     private final ScoreService scoreService;

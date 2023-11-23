@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import '../node_modules/ngx-toastr/toastr.css';
 
 
 html, body { height: 100%; }
@@ -17,6 +18,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-right: 2rem;
 }
 
+.ml-05 {
+  margin-left: 0.5rem;
+}
+
 .mb-1 {
   margin-bottom: 1rem;
 }
@@ -26,7 +31,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   justify-content: center;
 }
 
+.text-justify{
+  text-align: justify;
+}
+
 .large-button {
-  font-size: 1.5rem;
-  padding: 1.5rem 3.5rem !important;
+  font-size: 1.3rem!important;
+  padding: 1.7rem 3rem !important;
+}
+
+.d-inline-block {
+    display: inline-block!important;
 }

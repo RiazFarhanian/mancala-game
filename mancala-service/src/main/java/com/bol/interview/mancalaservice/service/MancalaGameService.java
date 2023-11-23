@@ -10,11 +10,13 @@ import com.bol.interview.mancalaservice.model.GameContext;
 import com.bol.interview.mancalaservice.repository.GameRepository;
 import com.bol.interview.mancalaservice.service.rules.GameRuleProcessor;
 import com.bol.interview.mancalaservice.service.validation.GameValidation;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 public class MancalaGameService implements GameService {
     private final GameRepository gameRepository;
     private final GameMapper gameMapper;
@@ -49,9 +51,13 @@ public class MancalaGameService implements GameService {
 
     @Override
     public void newGame(String joinId, PairPlayersDto pairPlayersDto) {
-        Game game = gameRepository.insert(gameGenerator.generateNewGame(joinId, pairPlayersDto));
-        GameDto gameDto;
-        gameDto = gameMapper.gameToGameDto(game);
+        //Generate new game
+        Game generatedNewGame = gameGenerator.generateNewGame(joinId, pairPlayersDto);
+        //Save new game
+        Game game = gameRepository.insert(generatedNewGame);
+        Game save = gameRepository.save(game);
+        //Convert game to GameDto
+        GameDto gameDto = gameMapper.gameToGameDto(save);
         //Send new GameDto for subscribers
         gameNotificationTemplate.send(gameNotificationTopic, pairPlayersDto, new GameNotificationEvent(NotificationSubject.Start.getSubject(),joinId, gameDto));
     }
@@ -63,7 +69,7 @@ public class MancalaGameService implements GameService {
         GameContext context = GameContext
                 .builder()
                 .joinId(joinId)
-                .selectedPitIndexInPitView(selectedPitIndex)
+                .selectedPitIndexInGame(selectedPitIndex)
                 .playerId(playerId)
                 .build();
 
@@ -80,10 +86,12 @@ public class MancalaGameService implements GameService {
         // Save the updated game
         Game savedGame = gameRepository.save(game);
 
+        //Convert game to GameDto
         GameDto gameDto = gameMapper.gameToGameDto(savedGame);
 
-        //Send new GameDto for subscribers
+        //Get PairPlayersDto
         PairPlayersDto pairPlayersDto = pairPlayerService.getPairPlayers(context);
+        //Send new GameDto for subscribers
         gameNotificationTemplate.send(gameNotificationTopic, pairPlayersDto, new GameNotificationEvent(NotificationSubject.Move.getSubject(), context.getJoinId(), gameDto));
 
         return gameDto;
@@ -92,13 +100,14 @@ public class MancalaGameService implements GameService {
     @Override
     public void leave(String joinId, String playerId) {
         Game game = gameRepository.findByJoinId(joinId);
-        game.setStatus(Game.Status.Left);
-        Game savedGame = gameRepository.save(game);
         GameContext context = GameContext.builder()
                 .joinId(joinId)
                 .game(game)
                 .build();
         leaveGameValidation.validate(context);
+
+        game.setStatus(Game.Status.Left);
+        Game savedGame = gameRepository.save(game);
 
         GameDto gameDto = gameMapper.gameToGameDto(savedGame);
         PairPlayersDto pairPlayersDto = pairPlayerService.getPairPlayers(context,playerId);

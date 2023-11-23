@@ -1,0 +1,17 @@
+<app-board *ngIf="isGameCreated"></app-board>
+<div class="new-game-container" *ngIf="!isGameCreated">
+    <div class="left-section">
+    </div>
+    <div class="right-section">
+        <h1>Welcome to the New Game!</h1>
+        <p>Embark on an exhilarating adventure where every step is a doorway to excitement and the unknown.</p>
+        <button 
+            mat-raised-button 
+            color="primary" 
+            class="mat-button-large large-button"
+            (click)="startGame()" [disabled]="isLoading">
+            <span>Start New Game</span>
+            <mat-spinner *ngIf="isLoading" diameter="30" class="btn-loading"></mat-spinner>
+          </button>
+    </div>
+</div>

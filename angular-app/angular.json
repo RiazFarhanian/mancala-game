@@ -27,7 +27,8 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
           },
@@ -66,6 +67,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "browserTarget": "mancala:build:production"
@@ -107,6 +111,6 @@
     }
   },
   "cli": {
-    "analytics": "a42b9445-5873-4ec6-961e-61dd7ef430fa"
+    "analytics": "42bc82a6-5868-4ab7-8215-f3ba19b1e72d"
   }
 }

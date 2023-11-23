@@ -16,7 +16,7 @@ public class PlayerService {
         Object principal = authentication.getPrincipal();
 
         if (principal instanceof Jwt jwt){
-            String username = jwt.getClaim("preferred_username");
+            String username = jwt.getSubject();
             String name = jwt.getClaim("name");
             return new PlayerDto(username,name);
         }
