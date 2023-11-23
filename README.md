@@ -66,7 +66,6 @@ To facilitate quick testing and learning about the APIs, a Postman configuration
 4. Access the Angular app at [http://localhost:4200](http://localhost:8080) to play the Mancala game.
 
 
-Certainly! Below is a template for the "Design and Architecture" section of your README:
 
 ---
 
@@ -126,9 +125,8 @@ The Mancala Game Application is designed with a microservices architecture to en
 
 ## Diagram
 
-![Microservices Architecture Diagram](link-to-your-diagram-image)
+![Microservices Architecture Diagram](https://github.com/RiazFarhanian/mancala-game/blob/main/documents/diagram.jpg?raw=true)
 
-(Include a diagram depicting the relationships and interactions between microservices)
 
 ## Future Considerations
 
